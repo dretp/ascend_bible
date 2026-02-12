@@ -39,7 +39,28 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Firebase related
+firebase.json
+lib/firebase_options.dart
+firebase_app_id_file.json
+.env
+
+# Ignore iOS/Android build outputs
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+android/.gradle/
+android/app/build/
+
+# Ignore web build outputs
+web/generated/
+
+# Ignore macOS build outputs
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Flutter/GeneratedPluginRegistrant.h
+
+# Ignore Linux/Windows build outputs
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
