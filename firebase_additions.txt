@@ -1,0 +1,3 @@
+# Add Firebase core and auth dependencies
+firebase_core: ^2.27.0
+firebase_auth: ^4.17.4
