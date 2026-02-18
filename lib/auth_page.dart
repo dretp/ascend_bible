@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'theme.dart';
 
 class AuthPage extends StatefulWidget {
@@ -14,18 +15,26 @@ class _AuthPageState extends State<AuthPage> {
     Future<void> handleGoogleSignIn() async {
       setState(() { isLoading = true; errorMessage = null; });
       try {
-        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-        if (googleUser == null) {
-          setState(() { isLoading = false; });
-          return; // User cancelled
+        if (kIsWeb) {
+          // Web: Use signInWithPopup
+          GoogleAuthProvider googleProvider = GoogleAuthProvider();
+          await FirebaseAuth.instance.signInWithPopup(googleProvider);
+          print('Google sign-in successful (web)');
+        } else {
+          // Mobile/Desktop: Use GoogleSignIn
+          final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+          if (googleUser == null) {
+            setState(() { isLoading = false; });
+            return; // User cancelled
+          }
+          final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          await FirebaseAuth.instance.signInWithCredential(credential);
+          print('Google sign-in successful');
         }
-        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-        final credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        await FirebaseAuth.instance.signInWithCredential(credential);
-        print('Google sign-in successful');
       } on FirebaseAuthException catch (e) {
         print('Google sign-in error: \\${e.code} - \\${e.message}');
         setState(() { errorMessage = e.message; });
